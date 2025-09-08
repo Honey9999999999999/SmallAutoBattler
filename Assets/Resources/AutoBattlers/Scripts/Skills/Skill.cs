@@ -41,11 +41,13 @@ namespace Autobattlers
 
         public void Invoke()
         {
-            if (!reloadTimer.IsRunning && owner.mana.Resource >= RequireMP)
+            if (!reloadTimer.IsRunning)
             {
-                owner.mana.GetResource(RequireMP);
-                Do();
-                reloadTimer.Start(ReloadTime);
+                if (owner.TryGetMana(RequireMP))
+                {
+                    Do();
+                    reloadTimer.Start(ReloadTime);
+                }                
             }
         }
 

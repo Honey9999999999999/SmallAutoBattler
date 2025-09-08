@@ -10,6 +10,14 @@ namespace Autobattlers
             Target = FieldOfWar.GetPlayer() != null && FieldOfWar.GetPlayer().health.IsResource ? FieldOfWar.GetPlayer() : null;
         }
 
+        protected override void Attack()
+        {
+            //if (Target.IsAlive)
+            {
+                Target.health.GetResource(Stats.AttackPower);
+            }
+        }
+
         protected override void Initialize()
         {
             base.Initialize();

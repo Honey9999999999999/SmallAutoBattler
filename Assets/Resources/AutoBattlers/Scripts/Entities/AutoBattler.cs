@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AutoBattlers;
 using AutoBattlers.AttackModifications;
 using BarSystem;
 using UnityEngine;
@@ -24,9 +25,9 @@ namespace Autobattlers
         public bool IsAlive => health.IsResource;
         public bool IsStuned { get; private set; }
 
-        [Min(0)] public float attackPower;
-        [Min(0)] public float attackPerSecond;
-        private float TimeBetweenAttacks => 1 / attackPerSecond;
+        public EntityStats Stats => stats;
+        [SerializeField] private EntityStats stats;
+
         public AutoBattler Target
         {
             get
@@ -42,7 +43,7 @@ namespace Autobattlers
                     if (target != null)
                     {
                         target.OnDead.AddListener((AutoBattler _) => FindTarget());
-                        attackRoutine ??= StartCoroutine(Attack());
+                        attackRoutine ??= StartCoroutine(AttackAsync());
                         OnTargetChanged?.Invoke(target);
                     }
                     else
@@ -96,9 +97,13 @@ namespace Autobattlers
                 StatusSystem.AddStatusEffect(kvp);
             }
         }
+        public void GetStatus(StatusType type, float durability)
+        {
+            StatusSystem.AddStatusEffect(type, durability);
+        }
 
 
-        private IEnumerator Attack()
+        private IEnumerator AttackAsync()
         {
             while (true)
             {
@@ -106,17 +111,16 @@ namespace Autobattlers
                 {
                     if (target.health.IsResource)
                     {
-                        AutoBattler currentTarget = target;
-                        currentTarget.GetDamage(attackPower, AttackModSystem.GetAttackMods());
-
-                        if(currentTarget.health.IsResource)
-                            currentTarget.GetStatuses(StatusSystem.GetStatuses());
+                        Attack();
                     }
                 }
 
-                yield return new WaitForSeconds(TimeBetweenAttacks);
+                yield return new WaitForSeconds(Stats.TimeBetweenAttacks);
             }
         }
+
+        protected abstract void Attack();
+
         private IEnumerator Dead()
         {
             StopCoroutine(attackRoutine);

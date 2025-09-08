@@ -16,6 +16,8 @@ namespace Arhitecture
         public override void OnInitialize()
         {
             base.OnInitialize();
+
+            Canvas.worldCamera = Camera.main;
         }
 
         public override void OnStart()

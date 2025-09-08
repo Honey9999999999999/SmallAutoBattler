@@ -16,7 +16,7 @@ namespace AutoBattlers.AttackModifications
 
         public override void Do(AutoBattler target)
         {
-            owner.health.AddResource(owner.attackPower * percent);
+            owner.health.AddResource(owner.Stats.AttackPower * percent);
         }
     }
 }

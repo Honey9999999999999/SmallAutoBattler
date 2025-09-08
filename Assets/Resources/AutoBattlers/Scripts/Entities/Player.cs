@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AutoBattlers;
 using BarSystem;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Autobattlers
@@ -9,7 +11,9 @@ namespace Autobattlers
     {
         public UnityEvent<float> OnManaChanged;
 
-        public RecoveryResource mana;
+        [SerializeField] RecoveryResource mana;
+        [SerializeField] MagicStick magicStick;
+
         public List<Skill> Skills { get; private set; }
 
         protected override void Initialize()
@@ -71,6 +75,25 @@ namespace Autobattlers
             if (enemies.Sum(x => x.health.Resource) / enemies.Count() != enemies.First().health.Resource)
             {
                 enemy = enemies.OrderBy(x => x.health.Resource).First();
+                return true;
+            }
+
+            return false;
+        }
+
+        protected override void Attack()
+        {
+            //if (Target.IsAlive)
+            {
+                magicStick.CastSpell(Target);
+            }
+        }
+
+        public bool TryGetMana(float value)
+        {
+            if(mana.Resource >= value)
+            {
+                mana.GetResource(value);
                 return true;
             }
 

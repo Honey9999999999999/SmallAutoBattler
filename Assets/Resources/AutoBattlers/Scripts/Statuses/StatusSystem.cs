@@ -41,12 +41,17 @@ namespace Autobattlers
 
         public void AddStatusEffect(KeyValuePair<StatusType, float> statusInfo)
         {
-            statusEffects.Add(statusCreateMap[statusInfo.Key].Invoke(statusInfo.Value));
+            AddStatusEffect(statusInfo.Key, statusInfo.Value);
+        }
+        public void AddStatusEffect(StatusType type, float durability)
+        {
+            statusEffects.Add(statusCreateMap[type].Invoke(durability));
             StatusEffect status = statusEffects[^1];
             status.OnShutDown += () => statusEffects.Remove(status);
-            status.OnShutDown += () => OnStatusChanged?.Invoke(statusInfo.Key);
-            OnStatusChanged?.Invoke(statusInfo.Key);
+            status.OnShutDown += () => OnStatusChanged?.Invoke(type);
+            OnStatusChanged?.Invoke(type);
         }
+
         public void AddStatusChance(StatusType type, float chance, float duration)
         {
             statusChanceMap[type].Add(new(Mathf.Clamp01(chance), Mathf.Max(0, duration)));
