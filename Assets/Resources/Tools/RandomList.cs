@@ -6,15 +6,14 @@ namespace Tools
 {
     public class RandomList<T>
     {
-        private readonly Dictionary<float, T> chanceMap;
+        private readonly List<KeyValuePair<float, T>> chanceMap;
 
-        public RandomList(Dictionary<float, T> chanceMap)
+        public RandomList(List<KeyValuePair<float, T>> chanceMap)
         {
-            float factor = 1 / chanceMap.Keys.Sum();
+            float factor = 1 / chanceMap.Sum(x => x.Key);
             this.chanceMap = chanceMap.
                 Select(x => new KeyValuePair<float, T>(x.Key * factor, x.Value)).
-                OrderBy(x => x.Key).
-                ToDictionary(x => x.Key, e => e.Value);
+                OrderBy(x => x.Key).ToList();
         }
 
         public T GetValue()
@@ -32,7 +31,7 @@ namespace Tools
                 }
             }
 
-            return chanceMap.Values.Last();
+            return chanceMap.Last().Value;
         }
     }
 }

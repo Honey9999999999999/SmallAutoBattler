@@ -46,7 +46,7 @@ ParticleSystem:
   m_GameObject: {fileID: 7572545526080412159}
   serializedVersion: 8
   lengthInSec: 5
-  simulationSpeed: 1
+  simulationSpeed: 0.5
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
@@ -120,7 +120,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.1
+      scalar: 0.05
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -225,9 +225,9 @@ ParticleSystem:
         m_RotationOrder: 4
     startColor:
       serializedVersion: 2
-      minMaxState: 2
+      minMaxState: 0
       minColor: {r: 1, g: 0.5865263, b: 0, a: 1}
-      maxColor: {r: 0.9137255, g: 0.24512026, b: 0, a: 1}
+      maxColor: {r: 1, g: 0, b: 0.08247185, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -291,7 +291,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 2
-      scalar: 15
+      scalar: 5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -615,7 +615,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -1
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -992,29 +992,20 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 1
-          inSlope: -4.209154
-          outSlope: -4.209154
+          inSlope: 0
+          outSlope: 0
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.034026463
-        - serializedVersion: 3
-          time: 0.10687089
-          value: 0.19757849
-          inSlope: -0.13544582
-          outSlope: -0.13544582
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.1573761
+          outWeight: 0
         - serializedVersion: 3
           time: 1
           value: 0
-          inSlope: -0.32657182
-          outSlope: -0.32657182
+          inSlope: -2
+          outSlope: -2
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.18414058
+          inWeight: 0
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -4854,10 +4845,10 @@ GameObject:
   - component: {fileID: 1317940279743991434}
   - component: {fileID: 8397011935813664616}
   - component: {fileID: 7531764353927427241}
-  - component: {fileID: 2295906963970984919}
+  - component: {fileID: -5527717809875773086}
   - component: {fileID: 9220198651805233811}
   m_Layer: 5
-  m_Name: FireBolt
+  m_Name: PhisicalBolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4948,7 +4939,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 10
---- !u!114 &2295906963970984919
+--- !u!114 &-5527717809875773086
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4957,12 +4948,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 9108247746078185631}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f99c6c112152634ea6b4590fedcd8d8, type: 3}
+  m_Script: {fileID: 11500000, guid: aeefacfd93b6c2c4295110d76e094455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  power: 5
+  power: 0.5
   projectileSpeed: 20
-  baseDamage: 20
 --- !u!222 &9220198651805233811
 CanvasRenderer:
   m_ObjectHideFlags: 0

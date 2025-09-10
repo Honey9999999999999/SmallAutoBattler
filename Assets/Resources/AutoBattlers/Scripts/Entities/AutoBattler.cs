@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Arhitecture;
 using AutoBattlers;
 using AutoBattlers.AttackModifications;
 using BarSystem;
@@ -13,16 +14,20 @@ namespace Autobattlers
     public abstract class AutoBattler : MonoBehaviour
     {
         public event Action<AutoBattler> OnTargetChanged;
-        public UnityEvent<float> OnHealthChanged;
+
+        public UnityEvent<float, float> OnHealthChanged;
+        public UnityEvent<float, float> OnManaChanged;
+
         public UnityEvent<AutoBattler> OnDead;
         public UnityEvent<AutoBattler> OnDispose;
 
         public AttackModSystem AttackModSystem { get; private set; }
-        public StatusSystem StatusSystem { get; private set; }
+        public StatusSystem Statuses { get; private set; }
 
-        public RecoveryResource health;
+        public RecoveryResource Health { get; private set; }
+        public RecoveryResource Mana { get; private set; }
 
-        public bool IsAlive => health.IsResource;
+        public bool IsAlive => Health.IsResource;
         public bool IsStuned { get; private set; }
 
         public EntityStats Stats => stats;
@@ -42,8 +47,7 @@ namespace Autobattlers
 
                     if (target != null)
                     {
-                        target.OnDead.AddListener((AutoBattler _) => FindTarget());
-                        attackRoutine ??= StartCoroutine(AttackAsync());
+                        target.OnDead.AddListener((AutoBattler _) => FindTarget());                        
                         OnTargetChanged?.Invoke(target);
                     }
                     else
@@ -65,41 +69,64 @@ namespace Autobattlers
 
         protected virtual void Initialize()
         {
-            health.FullRestore();
-            health.OnChanged += (float ratio) => OnHealthChanged?.Invoke(ratio);
-            health.OnEnd += () => StartCoroutine(Dead());
-            StatusSystem = new StatusSystem(this);
-            StatusSystem.OnStatusChanged += (StatusType status) => IsStuned = StatusSystem.IsStatus<StunEffect>();
+            Health = new RecoveryResource(stats.MaxHealth, stats.HealthRegeneration, 1, false);
+            Health.OnChanged += (float current, float max) => OnHealthChanged?.Invoke(current, max);
+            Health.OnEnd += () => StartCoroutine(Dead());
+            Stats.OnStatsChanged += () => Health.MaxResource = Stats.MaxHealth;
+
+            Mana = new RecoveryResource(Stats.MaxMana, Stats.ManaRegeneration, 0);
+            Mana.OnChanged += (float current, float max) => OnManaChanged?.Invoke(current, max);
+            Stats.OnStatsChanged += () => Mana.MaxResource = Stats.MaxMana;
+
+            Statuses = new StatusSystem(this);
+            Statuses.OnStatusChanged += (StatusType status) => IsStuned = Statuses.IsStatus<StunEffect>();
             AttackModSystem = new AttackModSystem(this);
+
+            Game.GetInteractor<FieldOfWarInteractor>().FieldOfWar.TimerToBattle.OnStartBattle += () => attackRoutine ??= StartCoroutine(AttackAsync());
         }
 
         public virtual void Start()
         {
-            OnHealthChanged?.Invoke(1);
+            Health.FullRestore();
+            Mana.FullRestore();
+
             FindTarget();
         }
 
         public abstract void FindTarget();
 
-        public void GetDamage(float damage, IEnumerable<AttackMod> attackMods)
+        public void GetDamage(float damage)
         {
-            health.GetResource(damage);
-
-            foreach (var attackMod in attackMods)
+            if (Health.IsResource)
             {
-                attackMod.Do(this);
-            }
+                Health.GetResource(damage);
+            }            
         }
         public void GetStatuses(List<KeyValuePair<StatusType, float>> statuses)
         {
             foreach (var kvp in statuses)
             {
-                StatusSystem.AddStatusEffect(kvp);
+                Statuses.AddStatusEffect(kvp);
             }
+            
         }
         public void GetStatus(StatusType type, float durability)
         {
-            StatusSystem.AddStatusEffect(type, durability);
+            if (Health.IsResource)
+            {
+                Statuses.AddStatusEffect(type, durability);
+            }
+        }
+
+        public bool TryGetMana(float value)
+        {
+            if (Mana.Resource >= value)
+            {
+                Mana.GetResource(value);
+                return true;
+            }
+
+            return false;
         }
 
 
@@ -109,10 +136,7 @@ namespace Autobattlers
             {
                 if (!IsStuned)
                 {
-                    if (target.health.IsResource)
-                    {
-                        Attack();
-                    }
+                    Attack();
                 }
 
                 yield return new WaitForSeconds(Stats.TimeBetweenAttacks);
@@ -131,6 +155,9 @@ namespace Autobattlers
             }
 
             OnDead?.Invoke(this);
+            OnHealthChanged.RemoveAllListeners();
+            OnManaChanged.RemoveAllListeners();
+            OnDead.RemoveAllListeners();
 
             yield return new WaitForSeconds(2);
 

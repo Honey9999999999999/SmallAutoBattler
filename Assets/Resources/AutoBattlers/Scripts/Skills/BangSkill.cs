@@ -46,17 +46,17 @@ namespace Autobattlers
             timer = new Timer();
             timer.OnStoped += () =>
             {
-                owner.Stats.AttackPerSec = oldAttackSpeed;
-                owner.Stats.AttackPower = oldAttack;
+                owner.Stats.BaseAttackPerSec = oldAttackSpeed;
+                owner.Stats.BaseAttackPower = oldAttack;
             };
         }
 
         protected override void Do()
         {
-            oldAttackSpeed = owner.Stats.AttackPerSec;
-            owner.Stats.AttackPerSec *= DecreaseAttackSpeed;
-            oldAttack = owner.Stats.AttackPower;
-            owner.Stats.AttackPower *= IncreaseAttack;
+            oldAttackSpeed = owner.Stats.BaseAttackPerSec;
+            owner.Stats.BaseAttackPerSec *= DecreaseAttackSpeed;
+            oldAttack = owner.Stats.BaseAttackPower;
+            owner.Stats.BaseAttackPower *= IncreaseAttack;
 
             timer.Start(Duration);
         }

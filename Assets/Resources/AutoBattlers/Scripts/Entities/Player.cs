@@ -9,18 +9,12 @@ namespace Autobattlers
 {
     public class Player : AutoBattler
     {
-        public UnityEvent<float> OnManaChanged;
-
-        [SerializeField] RecoveryResource mana;
-        [SerializeField] MagicStick magicStick;
-
+        [SerializeField] private MagicStick magicStick;
         public List<Skill> Skills { get; private set; }
 
         protected override void Initialize()
         {
             base.Initialize();
-
-            mana.OnChanged += (float ratio) => OnManaChanged?.Invoke(ratio);            
 
             Skills = new()
             {
@@ -39,15 +33,6 @@ namespace Autobattlers
                     RequireMP = 60
                 }
             };
-
-            StatusSystem.AddStatusChance(StatusSystem.StatusType.Stun, .3f, 2);
-            StatusSystem.AddStatusChance(StatusSystem.StatusType.Fire, .3f, 5);
-        }
-
-        public override void Start()
-        {
-            base.Start();
-            mana.FullRestore();
         }
 
         public override void FindTarget()
@@ -72,9 +57,9 @@ namespace Autobattlers
             enemy = null;
             IEnumerable<AutoBattler> enemies = FieldOfWar.GetEnemies();
 
-            if (enemies.Sum(x => x.health.Resource) / enemies.Count() != enemies.First().health.Resource)
+            if (enemies.Sum(x => x.Health.Resource) / enemies.Count() != enemies.First().Health.Resource)
             {
-                enemy = enemies.OrderBy(x => x.health.Resource).First();
+                enemy = enemies.OrderBy(x => x.Health.Resource).First();
                 return true;
             }
 
@@ -83,21 +68,7 @@ namespace Autobattlers
 
         protected override void Attack()
         {
-            //if (Target.IsAlive)
-            {
-                magicStick.CastSpell(Target);
-            }
-        }
-
-        public bool TryGetMana(float value)
-        {
-            if(mana.Resource >= value)
-            {
-                mana.GetResource(value);
-                return true;
-            }
-
-            return false;
+            magicStick.CastSpell(Target);
         }
     }
 }

@@ -20,18 +20,21 @@ namespace AutoBattlers
             spellPathMap = new()
             {
                 [typeof(FireBolt)] = "AutoBattlers/Prefabs/Spellls/FireBolt",
-                [typeof(StunBolt)] = "AutoBattlers/Prefabs/Spellls/StunBolt"
+                [typeof(StunBolt)] = "AutoBattlers/Prefabs/Spellls/StunBolt",
+                [typeof(PhisicalBolt)] = "AutoBattlers/Prefabs/Spellls/PhisicalBolt"
             };
-            spellChanceMap = new(new Dictionary<float, Type>()
+            spellChanceMap = new(new List<KeyValuePair<float, Type>>()
             {
-                [.7f] = typeof(FireBolt),
-                [.3f] = typeof(StunBolt)
+                new(.4f, typeof(PhisicalBolt)),
+                new(.3f, typeof(FireBolt)),
+                new(.3f, typeof(StunBolt))
             });
         }
 
         public void CastSpell(AutoBattler target)
         {
             MagicSpell spell = Game.Instantiate(Resources.Load<MagicSpell>(spellPathMap[spellChanceMap.GetValue()]), transform);
+            spell.InitializeOwner(owner);
             Vector3 attackVector = (target.transform.position - castPosition.position).normalized;
 
             CoroutineManager.StartCoroutineAsynk(SpellFlightAsync(spell, attackVector));
@@ -44,9 +47,9 @@ namespace AutoBattlers
 
             while (!isGoal)
             {
-                yield return null;
-
                 spell.transform.position += spell.GetProjectileSpeed() * Time.deltaTime * direction;
+
+                yield return null;
             }            
         }
     }

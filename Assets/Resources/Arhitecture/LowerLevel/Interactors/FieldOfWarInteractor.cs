@@ -30,6 +30,8 @@ namespace Arhitecture
         public override void OnStart()
         {
             base.OnStart();
+
+            FieldOfWar.TimerToBattle.StartBattle();
         }
     }
 }

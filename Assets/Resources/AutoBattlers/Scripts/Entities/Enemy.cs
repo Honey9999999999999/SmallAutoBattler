@@ -2,20 +2,16 @@
 
 namespace Autobattlers
 {
-    internal class Enemy : AutoBattler
+    public class Enemy : AutoBattler
     {
-
         public override void FindTarget()
         {
-            Target = FieldOfWar.GetPlayer() != null && FieldOfWar.GetPlayer().health.IsResource ? FieldOfWar.GetPlayer() : null;
+            Target = FieldOfWar.GetPlayer() != null && FieldOfWar.GetPlayer().IsAlive ? FieldOfWar.GetPlayer() : null;
         }
 
         protected override void Attack()
         {
-            //if (Target.IsAlive)
-            {
-                Target.health.GetResource(Stats.AttackPower);
-            }
+            Target.GetDamage(Stats.AttackPower);
         }
 
         protected override void Initialize()

@@ -6,7 +6,7 @@ namespace AutoBattlers
     {
         public override void Do(AutoBattler battler)
         {
-            if (battler.health.IsResource)
+            if (battler.IsAlive)
             {
                 battler.GetStatus(StatusSystem.StatusType.Stun, power);
             }

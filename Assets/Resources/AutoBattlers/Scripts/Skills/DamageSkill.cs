@@ -16,7 +16,7 @@ namespace Autobattlers
 
         protected override void Do()
         {
-            owner.Target.health.GetResource(owner.Stats.AttackPower * percent);
+            owner.Target.Health.GetResource(owner.Stats.AttackPower * percent);
         }
     }
 }

@@ -17,12 +17,20 @@ namespace AutoBattlers
             if(collision.isTrigger && collision.gameObject.TryGetComponent(out AutoBattler battler))
             {
                 OnTrigger?.Invoke(battler);
-                Do(battler);
+                if (battler.IsAlive)
+                {
+                    Do(battler);
+                }                
                 Destroy(gameObject);
             }
         }
 
-        public abstract void Do(AutoBattler battler);
+        public virtual void InitializeOwner(AutoBattler owner)
+        {
+            power *= owner.Stats.Intellegence;
+        }
+
+        public abstract void Do(AutoBattler target);
 
         public float GetProjectileSpeed() => projectileSpeed;
     }

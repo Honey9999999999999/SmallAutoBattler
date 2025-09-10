@@ -4,38 +4,57 @@ using UnityEngine;
 
 namespace BarSystem
 {
-    [Serializable]
     public class RecoveryResource
     {
-        public RecoveryResource(float maxResource, float recoveryPower, bool canRestoreWhenEnd = true)
+        public RecoveryResource(float maxResource, float recoveryPower, float recoveryCooldown, bool canRestoreWhenEnd = true)
         {
             this.maxResource = maxResource;
             Resource = maxResource;
             this.recoveryPower = recoveryPower;
+            this.recoveryCooldown = recoveryCooldown;
             CanRestoreWhenEnd = canRestoreWhenEnd;
         }
-        public RecoveryResource() : this(100, 1) { }
+        public RecoveryResource() : this(100, 1, 1) { }
 
-        public event Action<float> OnChanged;
+        public event Action<float, float> OnChanged;
         public event Action<float> OnGetted;
         public event Action<float> OnAdded;
         public event Action OnEnd;
         public event Action OnRestored;
 
-        [SerializeField, Min(0)] private float maxResource;
+        public float MaxResource
+        {
+            get => maxResource;
+            set
+            {
+                float ratio = ResourceRatio;
+                maxResource = Mathf.Max(0, value);
+                ResourceRatio = ratio;
+            }
+        }
+        private float maxResource;
         public float Resource
         {
             get { return resource; }
             private set
             {
                 resource = Math.Clamp(value, 0, maxResource);
-                OnChanged?.Invoke(Resource / maxResource);
+                OnChanged?.Invoke(resource, maxResource);
             }
         }
         private float resource;
 
-        [SerializeField, Min(0)] private float recoveryPower;
-        [SerializeField, Min(0)] private float recoveryCooldown;
+        public float ResourceRatio
+        {
+            get => Resource / maxResource;
+            set
+            {
+                Resource = maxResource * Mathf.Clamp01(value);
+            }
+        }
+
+        private float recoveryPower;
+        private float recoveryCooldown;
 
         private Coroutine recoveryRoutine;
 
@@ -67,6 +86,11 @@ namespace BarSystem
 
             if (!IsResource)
             {
+                if (recoveryRoutine != null)
+                {
+                    CoroutineManager.StopCoroutineAsynk(recoveryRoutine);
+                }
+
                 OnEnd?.Invoke();
             }
         }

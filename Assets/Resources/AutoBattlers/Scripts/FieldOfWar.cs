@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using AutoBattlers;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,6 +11,8 @@ namespace Autobattlers
 {
     public class FieldOfWar : MonoBehaviour
     {
+        public TimerToBattle TimerToBattle => timerToBattle;
+        [SerializeField] private TimerToBattle timerToBattle;
 
         [SerializeField] private Transform playerPoint;
         [SerializeField] private List<Transform> enemyPoint = new();
@@ -17,7 +22,7 @@ namespace Autobattlers
         private Player player;
         [SerializeField] private AutoBattler enemyPrefab;
 
-        public Transform targetImage;
+        public Transform targetImage;        
 
         private static FieldOfWar instance;
 
@@ -91,6 +96,6 @@ namespace Autobattlers
             SpawnEnemy(point);
         }
 
-        public static IEnumerable<AutoBattler> GetEnemies() => instance.enemiesMap.Keys.Where(x => x.IsAlive);
+        public static IEnumerable<AutoBattler> GetEnemies() => instance.enemiesMap.Keys.Where(x => x.Health.IsResource);
     }
 }

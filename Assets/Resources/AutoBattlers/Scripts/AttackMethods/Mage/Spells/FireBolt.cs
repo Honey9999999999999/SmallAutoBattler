@@ -1,15 +1,13 @@
 ﻿using Autobattlers;
+using UnityEngine;
 
 namespace AutoBattlers
 {
     public class FireBolt : MagicSpell
     {
-        public override void Do(AutoBattler battler)
+        public override void Do(AutoBattler target)
         {
-            if (battler.health.IsResource)
-            {
-                battler.GetStatus(StatusSystem.StatusType.Fire, power);
-            }
+            target.GetStatus(StatusSystem.StatusType.Fire, power);
         }
     }
 }

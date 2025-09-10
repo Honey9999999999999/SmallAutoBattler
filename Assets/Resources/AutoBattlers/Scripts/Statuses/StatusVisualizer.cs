@@ -14,16 +14,16 @@ namespace Autobattlers
 
         public void Start()
         {
-            battler.StatusSystem.OnStatusChanged += (StatusSystem.StatusType status) => CheckStatuses();
+            battler.Statuses.OnStatusChanged += (StatusSystem.StatusType status) => CheckStatuses();
             stunCounter = stunImage.GetComponent<TextMeshProUGUI>();
             fireCounter = fireImage.GetComponent<TextMeshProUGUI>();
         }
 
         private void CheckStatuses()
         {
-            stunCounter.text = "x" + (battler.StatusSystem.Count<StunEffect>().ToString());
+            stunCounter.text = "x" + (battler.Statuses.Count<StunEffect>().ToString());
             stunImage.SetActive(stunCounter.text != "x0");
-            fireCounter.text = "x" + (battler.StatusSystem.Count<FireStatus>().ToString());
+            fireCounter.text = "x" + (battler.Statuses.Count<FireStatus>().ToString());
             fireImage.SetActive(fireCounter.text != "x0");
         }
     }

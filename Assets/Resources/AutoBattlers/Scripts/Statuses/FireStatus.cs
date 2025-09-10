@@ -11,7 +11,7 @@ namespace Autobattlers
         protected override void Initialize()
         {
             shutdownTimer.TickTime = tickTime;
-            shutdownTimer.OnTick += (float _) => owner.health.GetResource(2);
+            shutdownTimer.OnTick += (float _) => owner.GetDamage(2);
         }
     }
 }
