@@ -54,33 +54,38 @@ public class Timer
 
     public void Reset()
     {
+        CurrentTime = 0;
+        CurrentTickTime = 0;
+
         if (timerCoroutine != null)
-        {
-            CurrentTime = 0;
-            CurrentTickTime = 0;
+        {            
             CoroutineManager.StopCoroutineAsynk(timerCoroutine);
         }
     }
 
     public void Resume()
     {
-        if(CurrentTime != 0)
+        if (timerCoroutine == null)
         {
-            timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerRoutine());
-            return;
-        }
+            if (CurrentTime > 0)
+            {
+                timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerRoutine());
+                return;
+            }
 
-        if(CurrentTickTime != 0)
-        {
-            timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerTickRoutine());
-            return;
-        }
+            if (CurrentTickTime > 0)
+            {
+                timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerTickRoutine());
+                return;
+            }
+        }        
     }
     public void Pause()
     {
         if (timerCoroutine != null)
         {
             CoroutineManager.StopCoroutineAsynk(timerCoroutine);
+            timerCoroutine = null;
         }
     }
 

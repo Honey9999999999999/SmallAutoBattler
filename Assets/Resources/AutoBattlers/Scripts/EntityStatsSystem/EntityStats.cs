@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Video;
 
 namespace AutoBattlers
 {
@@ -28,24 +27,29 @@ namespace AutoBattlers
                 set
                 {
                     baseValue = Mathf.Max(1, value);
-                    Update();                    
+                    Update();
                 }
             }
-            [SerializeField, Min(1)] private int baseValue;
+            [SerializeField, Min(1)] private int baseValue = 1;
             public int AdditionalValue
             {
                 get => additionalValue;
                 set
                 {
-                    additionalValue = Mathf.Max(0, value);
+                    additionalValue = value;
                     Update();
                 }
             }
-            [SerializeField, Min(0)] private int additionalValue;
+            [SerializeField] private int additionalValue;
 
             public virtual void Update()
             {
-                GeneralValue = (BaseValue + AdditionalValue) / 10f;
+                GeneralValue = Mathf.Max(0.1f, (BaseValue + AdditionalValue) / 10f);
+                OnChangedInvoke();
+            }
+
+            protected void OnChangedInvoke()
+            {
                 OnChanged?.Invoke(GeneralValue);
             }
         }
@@ -66,11 +70,12 @@ namespace AutoBattlers
 
             public override void Update()
             {
-                GeneralValue = (BaseValue + AdditionalValue) * Attribute.GeneralValue;
+                GeneralValue = Mathf.Max(0, (BaseValue + AdditionalValue) * Attribute.GeneralValue);
+                OnChangedInvoke();
             }
         }
 
-        
+                
         private Dictionary<StatType, Attribute> attributeMap;
 
         public StatType MainStat;
@@ -85,8 +90,8 @@ namespace AutoBattlers
 
         internal Characteristic AttackPower => attackPower;
         [SerializeField] private Characteristic attackPower;
-        internal Characteristic AttackPerSec => attackPerSec;
-        [SerializeField] private Characteristic attackPerSec;
+        internal Characteristic AttackPerMin => attackPerMin;
+        [SerializeField] private Characteristic attackPerMin;
         internal Characteristic MaxHealth => maxHealth;
         [SerializeField] private Characteristic maxHealth;
         internal Characteristic MaxMana => maxMana;
@@ -97,7 +102,7 @@ namespace AutoBattlers
         [SerializeField] private Characteristic manaRegeneration;
 
 
-        public float TimeBetweenAttacks => 1 / AttackPerSec.GeneralValue;
+        public float TimeBetweenAttacks { get; private set; }
 
         public void Initialize()
         {
@@ -114,9 +119,14 @@ namespace AutoBattlers
             MaxHealth.Attribute = Strenght;
             HealthRegeneration.Attribute = Strenght;
 
-            AttackPerSec.Attribute = Agility;
+            AttackPerMin.Attribute = Agility;
+            AttackPerMin.OnChanged += (float value) => TimeBetweenAttacks = 1 / (value / 60);
 
             AttackPower.Attribute = attributeMap[MainStat];
+
+            Intellegence.Update();
+            Strenght.Update();
+            Agility.Update();
         }
     }
 }

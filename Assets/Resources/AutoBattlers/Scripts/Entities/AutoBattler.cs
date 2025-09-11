@@ -1,4 +1,3 @@
-using Arhitecture;
 using AutoBattlers.AttackModifications;
 using BarSystem;
 using System;
@@ -20,17 +19,37 @@ namespace AutoBattlers
         public UnityEvent<AutoBattler> OnDead;
         public UnityEvent<AutoBattler> OnDispose;
 
-        public AttackModSystem AttackModSystem { get; private set; }
-        public StatusSystem Statuses { get; private set; }
+        public AttackModSystem AttackModSystem { get; private set; }        
 
+        public EntityStats Stats => stats;
+        [SerializeField] private EntityStats stats;
+        public StatusSystem Statuses { get; private set; }
         public RecoveryResource Health { get; private set; }
         public RecoveryResource Mana { get; private set; }
 
         public bool IsAlive => Health.IsResource;
-        public bool IsStuned { get; private set; }
+        public bool IsStuned
+        {
+            get => isStuned;
+            set
+            {
+                if (isStuned != value)
+                {
+                    isStuned = value;
 
-        public EntityStats Stats => stats;
-        [SerializeField] private EntityStats stats;
+                    if (isStuned)
+                    {
+                        attackTimer.Pause();
+                        return;
+                    }
+                    if (Target != null && Target.IsAlive)
+                    {
+                        attackTimer.Resume();
+                    }
+                }
+            }
+        }
+        private bool isStuned;
 
         private Timer attackTimer;
 
@@ -42,25 +61,16 @@ namespace AutoBattlers
             }
             set
             {
-                if (target != value)
+                if (value != null && target != value)
                 {
                     target = value;
-
-                    if (target != null)
-                    {
-                        target.OnDead.AddListener((AutoBattler _) => FindTarget());
-                        OnTargetChanged?.Invoke(target);
-                    }
-                    else
-                    {
-                        attackTimer.Reset();
-                    }
+                    OnTargetChanged?.Invoke(target);
                 }
             }
         }
         private AutoBattler target;
 
-        [SerializeField] private Animator animator;
+        [SerializeField] protected Animator animator;
 
         public void Awake()
         {
@@ -86,9 +96,7 @@ namespace AutoBattlers
 
             attackTimer = new Timer();
             attackTimer.OnTick += AttackTick;
-            Stats.AttackPerSec.OnChanged += (float _) => attackTimer.MaxTickTime = Stats.TimeBetweenAttacks;
-
-            Game.GetInteractor<FieldOfWarInteractor>().FieldOfWar.TimerToBattle.OnStartBattle += () => attackTimer.StartTicks(Stats.TimeBetweenAttacks);
+            Stats.AttackPerMin.OnChanged += (float _) => attackTimer.MaxTickTime = Stats.TimeBetweenAttacks;
         }
 
         public void Start()
@@ -97,9 +105,36 @@ namespace AutoBattlers
             Mana.FullRestore();
 
             FindTarget();
+
+            if (FieldOfWar.IsBattleStarted && Target != null)
+            {
+                attackTimer.StartTicks(Stats.TimeBetweenAttacks);
+                return;
+            }
+
+            FieldOfWar.OnBattleStart += () => attackTimer.StartTicks(Stats.TimeBetweenAttacks);
         }
 
-        public abstract void FindTarget();
+        private void FindTarget()
+        {
+            if(TryFindTarget(out AutoBattler enemy))
+            {
+                Target = enemy;
+                Target.OnDead.AddListener((AutoBattler _) => FindTarget());
+                FieldOfWar.OnEntitySpawned -= FindTarget;
+                attackTimer.Resume();
+
+                return;
+            }
+
+            if(Target != null)
+            {
+                attackTimer.Pause();
+                FieldOfWar.OnEntitySpawned += FindTarget;
+                Target = null;
+            }
+        }
+        public abstract bool TryFindTarget(out AutoBattler enemy);
 
         public void GetDamage(float damage)
         {
@@ -114,7 +149,6 @@ namespace AutoBattlers
             {
                 Statuses.AddStatusEffect(kvp);
             }
-
         }
         public void GetStatus(StatusType type, float durability)
         {
@@ -138,9 +172,11 @@ namespace AutoBattlers
 
         private void AttackTick()
         {
-            if (!IsStuned)
+            Attack();
+
+            foreach (var attackMod in AttackModSystem.GetAttackMods())
             {
-                Attack();
+                attackMod.Do(Target);
             }
         }
 

@@ -4,28 +4,9 @@ namespace AutoBattlers
 {
     public class BangSkill : Skill
     {
-        public float AttackSpeedFactor
-        {
-            get
-            {
-                return attackSpeedFactor;
-            }
-            set
-            {
-                attackSpeedFactor = Mathf.Max(0, value);
-            }
-        }
-        private float attackSpeedFactor;
+        public float AttackSpeedFactor { get; set; }
 
-        public float AttackPowerFactor
-        {
-            get => attackPowerFactor;
-            set
-            {
-                attackPowerFactor = Mathf.Max(0, value);
-            }
-        }
-        private float attackPowerFactor;
+        public float AttackPowerFactor { get; set; }
 
         private int attackSpeed;
         private int attackPower;
@@ -47,17 +28,17 @@ namespace AutoBattlers
             timer = new Timer();
             timer.OnStoped += () =>
             {
-                owner.Stats.AttackPerSec.AdditionalValue -= attackSpeed;
+                owner.Stats.AttackPerMin.AdditionalValue -= attackSpeed;
                 owner.Stats.AttackPower.AdditionalValue -= attackPower;
             };
         }
 
         protected override void Do()
         {
-            attackSpeed = Mathf.CeilToInt(owner.Stats.AttackPerSec.BaseValue * attackSpeedFactor);
-            owner.Stats.AttackPerSec.AdditionalValue += attackSpeed;
+            attackSpeed = Mathf.CeilToInt(owner.Stats.AttackPerMin.BaseValue * AttackSpeedFactor);
+            owner.Stats.AttackPerMin.AdditionalValue += attackSpeed;
 
-            attackPower = Mathf.CeilToInt(owner.Stats.AttackPower.BaseValue * attackSpeedFactor);
+            attackPower = Mathf.CeilToInt(owner.Stats.AttackPower.BaseValue * AttackPowerFactor);
             owner.Stats.AttackPower.AdditionalValue += attackPower;
 
             timer.Start(Duration);

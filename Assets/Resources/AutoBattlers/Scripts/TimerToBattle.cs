@@ -8,15 +8,28 @@ namespace AutoBattlers
     [Serializable]
     public class TimerToBattle : MonoBehaviour
     {
-        public event Action OnStartBattle;
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                instance = this;
+                return;
+            }
+
+            Destroy(gameObject);
+        }
+
+        public static event Action OnStartBattle;
 
         [SerializeField] private int time;
         [SerializeField] private TextMeshProUGUI timerField;
         [SerializeField] private Animator timerAnimator;
 
-        public void StartBattle()
+        private static TimerToBattle instance;
+
+        public static void StartBattle()
         {
-            StartCoroutine(StartBattleAsync());
+            instance.StartCoroutine(instance.StartBattleAsync());
         }
 
         private IEnumerator StartBattleAsync()
@@ -36,6 +49,7 @@ namespace AutoBattlers
             }
 
             OnStartBattle?.Invoke();
+            Destroy(gameObject);
         }
     }
 }

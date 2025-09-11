@@ -6,13 +6,16 @@ namespace Arhitecture
     public class FieldOfWarInteractor : Interactor
     {
         public FieldOfWar FieldOfWar { get; private set; }
+        public TimerToBattle TimerTB { get; private set; }
         public SkillBoard Skillboard { get; private set; }
         private const string FieldOfWarPath = "AutoBattlers/Prefabs/FieldOfWar";
+        private const string TimerTBPath = "AutoBattlers/Prefabs/TimerToBattle";
         private const string SkillBoardPath = "AutoBattlers/Prefabs/UI/SkillBoard";
 
         public override void OnCreate()
         {
             FieldOfWar = Game.Instantiate(Resources.Load<FieldOfWar>(FieldOfWarPath), Game.GetInteractor<MainCanvasInteractor>().Canvas.transform);
+            TimerTB = Game.Instantiate(Resources.Load<TimerToBattle>(TimerTBPath), Game.GetInteractor<MainCanvasInteractor>().Canvas.transform);
 
             base.OnCreate();
         }
@@ -31,7 +34,8 @@ namespace Arhitecture
         {
             base.OnStart();
 
-            FieldOfWar.TimerToBattle.StartBattle();
+            TimerToBattle.OnStartBattle += FieldOfWar.StartBattle;            
+            Game.OnInitialized += TimerToBattle.StartBattle;
         }
     }
 }

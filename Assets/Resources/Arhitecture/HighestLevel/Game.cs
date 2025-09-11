@@ -9,7 +9,7 @@ namespace Arhitecture
 {
     public class Game : MonoBehaviour
     {
-        public event Action OnInitialized;
+        public static event Action OnInitialized;
 
         [SerializeField] private string firstSceneName;
         private static Game instance;

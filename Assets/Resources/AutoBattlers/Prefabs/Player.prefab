@@ -292,15 +292,33 @@ MonoBehaviour:
       m_Calls: []
   stats:
     MainStat: 0
-    intellegence: 12
-    strenght: 8
-    agility: 10
-    baseAttackPower: 65
-    baseAttackPerSec: 1
-    baseHealth: 600
-    baseHealthRegeneration: 3
-    baseMana: 250
-    baseManaRegeneration: 5
+    intellegence:
+      baseValue: 12
+      additionalValue: 0
+    strenght:
+      baseValue: 8
+      additionalValue: 0
+    agility:
+      baseValue: 10
+      additionalValue: 0
+    attackPower:
+      baseValue: 65
+      additionalValue: 0
+    attackPerMin:
+      baseValue: 60
+      additionalValue: 0
+    maxHealth:
+      baseValue: 600
+      additionalValue: 0
+    maxMana:
+      baseValue: 400
+      additionalValue: 0
+    healthRegeneration:
+      baseValue: 3
+      additionalValue: 0
+    manaRegeneration:
+      baseValue: 4
+      additionalValue: 0
   animator: {fileID: 8976652347731333533}
   magicStick: {fileID: 1137098658457646393}
 --- !u!1 &2887347915025785875

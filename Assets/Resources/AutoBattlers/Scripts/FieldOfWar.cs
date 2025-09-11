@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,8 +8,8 @@ namespace AutoBattlers
 {
     public class FieldOfWar : MonoBehaviour
     {
-        public TimerToBattle TimerToBattle => timerToBattle;
-        [SerializeField] private TimerToBattle timerToBattle;
+        public static event Action OnBattleStart;
+        public static event Action OnEntitySpawned;
 
         [SerializeField] private Transform playerPoint;
         [SerializeField] private List<Transform> enemyPoint = new();
@@ -22,9 +23,24 @@ namespace AutoBattlers
 
         private static FieldOfWar instance;
 
+        public static bool IsBattleStarted { get; private set; }
+
         public void Awake()
         {
-            instance = instance != null ? instance : this;
+            if(instance == null)
+            {
+                instance = this;
+
+                return;
+            }
+
+            Destroy(gameObject);
+        }
+
+        public void StartBattle()
+        {
+            OnBattleStart?.Invoke();
+            IsBattleStarted = true;
         }
 
         public void SpawnPlayer()
@@ -33,6 +49,8 @@ namespace AutoBattlers
             {
                 player = Instantiate(playerPrefab, playerPoint);
                 player.OnTargetChanged += MoveTargetImage;
+
+                OnEntitySpawned?.Invoke();
             }
         }
 
@@ -75,7 +93,7 @@ namespace AutoBattlers
 
         private void SpawnEnemy(Transform point)
         {
-            if (enemiesMap.Values.Where(x => x == point).Count() > 0)
+            if (enemiesMap.Values.Count(x => x == point) > 0)
             {
                 return;
             }
@@ -83,6 +101,8 @@ namespace AutoBattlers
             AutoBattler battler = Instantiate(enemyPrefab, point);
             enemiesMap[battler] = point;
             battler.OnDispose.AddListener(ReSpawnEnemy);
+
+            OnEntitySpawned?.Invoke();
         }
 
         private void ReSpawnEnemy(AutoBattler battler)

@@ -24,7 +24,7 @@ namespace AutoBattlers
                 new BangSkill(this)
                 {
                     ReloadTime = 20f,
-                    AttackSpeedFactor = .4f,
+                    AttackSpeedFactor = -.6f,
                     AttackPowerFactor = 2f,
                     Duration = 10f,
                     RequireMP = 60
@@ -32,7 +32,7 @@ namespace AutoBattlers
                 new BangSkill(this)
                 {
                     ReloadTime = 20f,
-                    AttackSpeedFactor = 5f,
+                    AttackSpeedFactor = 3f,
                     AttackPowerFactor = .4f,
                     Duration = 10f,
                     RequireMP = 120
@@ -40,21 +40,29 @@ namespace AutoBattlers
             };
         }
 
-        public override void FindTarget()
+        public override bool TryFindTarget(out AutoBattler enemy)
         {
-            if (TryGetWeaknessEnemy(out AutoBattler enemy))
+            if (TryGetWeaknessEnemy(out enemy) || TryGetRandomEnemy(out enemy))
             {
                 Target = enemy;
-                return;
+                return true;
             };
 
-            Target = GetRandomEnemy();
+            return false;
         }
 
-        public AutoBattler GetRandomEnemy()
+        public bool TryGetRandomEnemy(out AutoBattler enemy)
         {
+            enemy = null;
             IEnumerable<AutoBattler> enemies = FieldOfWar.GetEnemies();
-            return enemies.ElementAt(Random.Range(0, enemies.Count()));
+
+            if(enemies.Count() > 0)
+            {
+                enemy = enemies.ElementAt(Random.Range(0, enemies.Count()));
+                return true;
+            }
+
+            return false;
         }
 
         public bool TryGetWeaknessEnemy(out AutoBattler enemy)
@@ -62,7 +70,7 @@ namespace AutoBattlers
             enemy = null;
             IEnumerable<AutoBattler> enemies = FieldOfWar.GetEnemies();
 
-            if (enemies.Sum(x => x.Health.Resource) / enemies.Count() != enemies.First().Health.Resource)
+            if (enemies.Count() > 0 && enemies.Sum(x => x.Health.Resource) / enemies.Count() != enemies.First().Health.Resource)
             {
                 enemy = enemies.OrderBy(x => x.Health.Resource).First();
                 return true;

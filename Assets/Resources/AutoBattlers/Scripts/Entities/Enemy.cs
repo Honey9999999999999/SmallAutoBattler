@@ -4,13 +4,18 @@ namespace AutoBattlers
 {
     public class Enemy : AutoBattler
     {
-        public override void FindTarget()
+        public override bool TryFindTarget(out AutoBattler enemy)
         {
-            Target = FieldOfWar.GetPlayer() != null && FieldOfWar.GetPlayer().IsAlive ? FieldOfWar.GetPlayer() : null;
+            enemy = FieldOfWar.GetPlayer();
+            return enemy != null && enemy.IsAlive;
         }
 
         protected override void Attack()
         {
+            if(animator != null)
+            {
+                animator.Play("Attack");
+            }
             Target.GetDamage(Stats.AttackPower.GeneralValue);
         }
 

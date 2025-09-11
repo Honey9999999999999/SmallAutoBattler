@@ -6,11 +6,11 @@ namespace AutoBattlers.AttackModifications
 {
     public class AttackModSystem
     {
-        private readonly Dictionary<Type, AttackMod> attackChanceMap;
+        private readonly Dictionary<Type, AttackMod> attackModsMap;
 
         public AttackModSystem(AutoBattler owner)
         {
-            attackChanceMap = new Dictionary<Type, AttackMod>()
+            attackModsMap = new Dictionary<Type, AttackMod>()
             {
                 [typeof(LifeStealMod)] = new LifeStealMod(owner)
             };
@@ -18,16 +18,16 @@ namespace AutoBattlers.AttackModifications
 
         public IEnumerable<AttackMod> GetAttackMods()
         {
-            return attackChanceMap.Values.Where(x => x.Chance > UnityEngine.Random.Range(0, 1));
+            return attackModsMap.Values.Where(x => x.Chance > UnityEngine.Random.Range(0, 1f));
         }
 
         public void AddAttackMod<T>(float chance) where T : AttackMod
         {
-            attackChanceMap[typeof(T)].Chance += chance;
+            attackModsMap[typeof(T)].Chance += chance;
         }
         public T GetAttackMod<T>() where T : AttackMod
         {
-            return (T)attackChanceMap[typeof(T)];
+            return (T)attackModsMap[typeof(T)];
         }
     }
 }
