@@ -21,7 +21,7 @@ public class Bar : MonoBehaviour
     {
         float ratio = current / max;
         slider.rectTransform.sizeDelta = new Vector2(Mathf.Lerp(minSize, maxSize, ratio), minSize);
-        if(textField != null)
+        if (textField != null)
         {
             textField.text = $"{current:F0}/{max:F0}";
         }

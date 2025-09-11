@@ -21,7 +21,7 @@ namespace AutoBattlers
 
         private IEnumerator StartBattleAsync()
         {
-            while(time > 0)
+            while (time > 0)
             {
                 if (timerField != null)
                 {
@@ -31,7 +31,7 @@ namespace AutoBattlers
                 {
                     timerAnimator.Play("TimerTB");
                 }
-                
+
                 yield return new WaitForSeconds(1);
             }
 

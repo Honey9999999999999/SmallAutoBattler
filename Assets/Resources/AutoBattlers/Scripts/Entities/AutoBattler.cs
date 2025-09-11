@@ -1,15 +1,14 @@
+using Arhitecture;
+using AutoBattlers.AttackModifications;
+using BarSystem;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Arhitecture;
-using AutoBattlers;
-using AutoBattlers.AttackModifications;
-using BarSystem;
 using UnityEngine;
 using UnityEngine.Events;
-using static Autobattlers.StatusSystem;
+using static AutoBattlers.StatusSystem;
 
-namespace Autobattlers
+namespace AutoBattlers
 {
     public abstract class AutoBattler : MonoBehaviour
     {
@@ -33,6 +32,8 @@ namespace Autobattlers
         public EntityStats Stats => stats;
         [SerializeField] private EntityStats stats;
 
+        private Timer attackTimer;
+
         public AutoBattler Target
         {
             get
@@ -47,12 +48,12 @@ namespace Autobattlers
 
                     if (target != null)
                     {
-                        target.OnDead.AddListener((AutoBattler _) => FindTarget());                        
+                        target.OnDead.AddListener((AutoBattler _) => FindTarget());
                         OnTargetChanged?.Invoke(target);
                     }
                     else
                     {
-                        StopCoroutine(attackRoutine);
+                        attackTimer.Reset();
                     }
                 }
             }
@@ -60,32 +61,37 @@ namespace Autobattlers
         private AutoBattler target;
 
         [SerializeField] private Animator animator;
-        private Coroutine attackRoutine;
 
         public void Awake()
         {
-            Initialize();
+           Initialize();
         }
 
         protected virtual void Initialize()
         {
-            Health = new RecoveryResource(stats.MaxHealth, stats.HealthRegeneration, 1, false);
+            Stats.Initialize();
+
+            Health = new RecoveryResource(stats.MaxHealth.GeneralValue, stats.HealthRegeneration.GeneralValue, 1, false);
             Health.OnChanged += (float current, float max) => OnHealthChanged?.Invoke(current, max);
             Health.OnEnd += () => StartCoroutine(Dead());
-            Stats.OnStatsChanged += () => Health.MaxResource = Stats.MaxHealth;
+            Stats.MaxHealth.OnChanged += (float value) => Health.MaxResource = value;
 
-            Mana = new RecoveryResource(Stats.MaxMana, Stats.ManaRegeneration, 0);
+            Mana = new RecoveryResource(Stats.MaxMana.GeneralValue, Stats.ManaRegeneration.GeneralValue, 0);
             Mana.OnChanged += (float current, float max) => OnManaChanged?.Invoke(current, max);
-            Stats.OnStatsChanged += () => Mana.MaxResource = Stats.MaxMana;
+            Stats.MaxMana.OnChanged += (float value) => Mana.MaxResource = value;
 
             Statuses = new StatusSystem(this);
             Statuses.OnStatusChanged += (StatusType status) => IsStuned = Statuses.IsStatus<StunEffect>();
             AttackModSystem = new AttackModSystem(this);
 
-            Game.GetInteractor<FieldOfWarInteractor>().FieldOfWar.TimerToBattle.OnStartBattle += () => attackRoutine ??= StartCoroutine(AttackAsync());
+            attackTimer = new Timer();
+            attackTimer.OnTick += AttackTick;
+            Stats.AttackPerSec.OnChanged += (float _) => attackTimer.MaxTickTime = Stats.TimeBetweenAttacks;
+
+            Game.GetInteractor<FieldOfWarInteractor>().FieldOfWar.TimerToBattle.OnStartBattle += () => attackTimer.StartTicks(Stats.TimeBetweenAttacks);
         }
 
-        public virtual void Start()
+        public void Start()
         {
             Health.FullRestore();
             Mana.FullRestore();
@@ -100,7 +106,7 @@ namespace Autobattlers
             if (Health.IsResource)
             {
                 Health.GetResource(damage);
-            }            
+            }
         }
         public void GetStatuses(List<KeyValuePair<StatusType, float>> statuses)
         {
@@ -108,7 +114,7 @@ namespace Autobattlers
             {
                 Statuses.AddStatusEffect(kvp);
             }
-            
+
         }
         public void GetStatus(StatusType type, float durability)
         {
@@ -130,16 +136,11 @@ namespace Autobattlers
         }
 
 
-        private IEnumerator AttackAsync()
+        private void AttackTick()
         {
-            while (true)
+            if (!IsStuned)
             {
-                if (!IsStuned)
-                {
-                    Attack();
-                }
-
-                yield return new WaitForSeconds(Stats.TimeBetweenAttacks);
+                Attack();
             }
         }
 
@@ -147,7 +148,7 @@ namespace Autobattlers
 
         private IEnumerator Dead()
         {
-            StopCoroutine(attackRoutine);
+            attackTimer.Reset();
 
             if (animator != null)
             {

@@ -1,33 +1,34 @@
 ﻿using UnityEngine;
 
-namespace Autobattlers
+namespace AutoBattlers
 {
     public class BangSkill : Skill
     {
-        public float DecreaseAttackSpeed
+        public float AttackSpeedFactor
         {
             get
             {
-                return decreaseAttackSpeed;
+                return attackSpeedFactor;
             }
             set
             {
-                decreaseAttackSpeed = Mathf.Clamp01(value);
+                attackSpeedFactor = Mathf.Max(0, value);
             }
         }
-        private float decreaseAttackSpeed;
-        private float oldAttackSpeed;
+        private float attackSpeedFactor;
 
-        public float IncreaseAttack
+        public float AttackPowerFactor
         {
-            get => increaseAttack;
+            get => attackPowerFactor;
             set
             {
-                increaseAttack = Mathf.Max(0, value);
+                attackPowerFactor = Mathf.Max(0, value);
             }
         }
-        private float increaseAttack;
-        private float oldAttack;
+        private float attackPowerFactor;
+
+        private int attackSpeed;
+        private int attackPower;
 
         public float Duration
         {
@@ -46,17 +47,18 @@ namespace Autobattlers
             timer = new Timer();
             timer.OnStoped += () =>
             {
-                owner.Stats.BaseAttackPerSec = oldAttackSpeed;
-                owner.Stats.BaseAttackPower = oldAttack;
+                owner.Stats.AttackPerSec.AdditionalValue -= attackSpeed;
+                owner.Stats.AttackPower.AdditionalValue -= attackPower;
             };
         }
 
         protected override void Do()
         {
-            oldAttackSpeed = owner.Stats.BaseAttackPerSec;
-            owner.Stats.BaseAttackPerSec *= DecreaseAttackSpeed;
-            oldAttack = owner.Stats.BaseAttackPower;
-            owner.Stats.BaseAttackPower *= IncreaseAttack;
+            attackSpeed = Mathf.CeilToInt(owner.Stats.AttackPerSec.BaseValue * attackSpeedFactor);
+            owner.Stats.AttackPerSec.AdditionalValue += attackSpeed;
+
+            attackPower = Mathf.CeilToInt(owner.Stats.AttackPower.BaseValue * attackSpeedFactor);
+            owner.Stats.AttackPower.AdditionalValue += attackPower;
 
             timer.Start(Duration);
         }

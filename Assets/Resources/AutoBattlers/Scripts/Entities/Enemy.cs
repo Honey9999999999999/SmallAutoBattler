@@ -1,6 +1,6 @@
 ﻿using AutoBattlers.AttackModifications;
 
-namespace Autobattlers
+namespace AutoBattlers
 {
     public class Enemy : AutoBattler
     {
@@ -11,7 +11,7 @@ namespace Autobattlers
 
         protected override void Attack()
         {
-            Target.GetDamage(Stats.AttackPower);
+            Target.GetDamage(Stats.AttackPower.GeneralValue);
         }
 
         protected override void Initialize()

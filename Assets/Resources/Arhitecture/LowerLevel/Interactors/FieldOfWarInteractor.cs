@@ -1,4 +1,4 @@
-﻿using Autobattlers;
+﻿using AutoBattlers;
 using UnityEngine;
 
 namespace Arhitecture
@@ -13,7 +13,7 @@ namespace Arhitecture
         public override void OnCreate()
         {
             FieldOfWar = Game.Instantiate(Resources.Load<FieldOfWar>(FieldOfWarPath), Game.GetInteractor<MainCanvasInteractor>().Canvas.transform);
-            
+
             base.OnCreate();
         }
 

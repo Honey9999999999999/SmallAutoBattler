@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Autobattlers
+namespace AutoBattlers
 {
     public abstract class Skill
     {
@@ -35,7 +35,7 @@ namespace Autobattlers
         {
             this.owner = owner;
             reloadTimer = new Timer();
-            reloadTimer.OnTick += (float currentTime) => OnReloadTimeChanged?.Invoke(currentTime);
+            reloadTimer.OnTick += () => OnReloadTimeChanged?.Invoke(reloadTimer.CurrentTime);
             reloadTimer.OnStoped += () => OnReloaded?.Invoke();
         }
 
@@ -47,7 +47,7 @@ namespace Autobattlers
                 {
                     Do();
                     reloadTimer.Start(ReloadTime);
-                }                
+                }
             }
         }
 

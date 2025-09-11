@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace Autobattlers
+﻿namespace AutoBattlers
 {
     public class FireStatus : StatusEffect
     {
@@ -10,8 +8,8 @@ namespace Autobattlers
 
         protected override void Initialize()
         {
-            shutdownTimer.TickTime = tickTime;
-            shutdownTimer.OnTick += (float _) => owner.GetDamage(2);
+            shutdownTimer.MaxTickTime = tickTime;
+            shutdownTimer.OnTick += () => owner.GetDamage(2);
         }
     }
 }

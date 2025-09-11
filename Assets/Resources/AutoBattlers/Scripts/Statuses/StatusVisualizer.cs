@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace Autobattlers
+namespace AutoBattlers
 {
     public class StatusVisualizer : MonoBehaviour
     {

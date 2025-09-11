@@ -1,7 +1,6 @@
 ﻿using System;
-using UnityEngine;
 
-namespace Autobattlers
+namespace AutoBattlers
 {
     public class DamageSkill : Skill
     {
@@ -16,7 +15,7 @@ namespace Autobattlers
 
         protected override void Do()
         {
-            owner.Target.Health.GetResource(owner.Stats.AttackPower * percent);
+            owner.Target.Health.GetResource(owner.Stats.AttackPower.GeneralValue * percent);
         }
     }
 }

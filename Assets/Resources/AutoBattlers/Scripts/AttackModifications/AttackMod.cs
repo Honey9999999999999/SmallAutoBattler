@@ -1,5 +1,4 @@
 ﻿using System;
-using Autobattlers;
 
 namespace AutoBattlers.AttackModifications
 {

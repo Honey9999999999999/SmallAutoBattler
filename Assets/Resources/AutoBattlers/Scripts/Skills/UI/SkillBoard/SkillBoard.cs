@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Autobattlers
+namespace AutoBattlers
 {
     public class SkillBoard : MonoBehaviour
     {

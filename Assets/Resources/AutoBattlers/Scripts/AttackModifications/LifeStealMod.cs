@@ -1,5 +1,4 @@
 ﻿using System;
-using Autobattlers;
 
 namespace AutoBattlers.AttackModifications
 {
@@ -16,7 +15,7 @@ namespace AutoBattlers.AttackModifications
 
         public override void Do(AutoBattler target)
         {
-            owner.Health.AddResource(owner.Stats.Strenght * percent);
+            owner.Health.AddResource(owner.Stats.AttackPower.GeneralValue * percent);
         }
     }
 }

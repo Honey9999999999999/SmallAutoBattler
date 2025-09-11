@@ -6,19 +6,20 @@ public class Timer
 {
     public event Action OnStarted;
     public event Action OnStoped;
-    public event Action<float> OnTick;
+    public event Action OnTick;
 
     private Coroutine timerCoroutine;
 
     public float CurrentTime { get; private set; }
+    public float CurrentTickTime { get; private set; }
     private float maxTime;
 
-    public float TickTime
+    public float MaxTickTime
     {
-        get => tickTime;
-        set => tickTime = Mathf.Max(0, value);
+        get => maxTickTime;
+        set => maxTickTime = Mathf.Max(0, value);
     }
-    private float tickTime;
+    private float maxTickTime;
     private float lastTick;
 
     public float TimeRatio => CurrentTime / maxTime;
@@ -26,15 +27,28 @@ public class Timer
 
     public void Start(float second)
     {
-        maxTime = second;
-        CurrentTime = second;
-        lastTick = second;
-        timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerRoutine());
-        OnStarted?.Invoke();
+        if(timerCoroutine == null)
+        {
+            maxTime = second;
+            CurrentTime = second;
+            lastTick = second;
+            timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerRoutine());
+            OnStarted?.Invoke();
+        }        
     }
+    public void StartTicks(float second)
+    {
+        if (timerCoroutine == null)
+        {
+            MaxTickTime = second;
+            timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerTickRoutine());
+            OnStarted?.Invoke();
+        }
+    }
+
     public void Stop()
     {
-        Reset();                
+        Reset();
         OnStoped?.Invoke();
     }
 
@@ -43,6 +57,29 @@ public class Timer
         if (timerCoroutine != null)
         {
             CurrentTime = 0;
+            CurrentTickTime = 0;
+            CoroutineManager.StopCoroutineAsynk(timerCoroutine);
+        }
+    }
+
+    public void Resume()
+    {
+        if(CurrentTime != 0)
+        {
+            timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerRoutine());
+            return;
+        }
+
+        if(CurrentTickTime != 0)
+        {
+            timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerTickRoutine());
+            return;
+        }
+    }
+    public void Pause()
+    {
+        if (timerCoroutine != null)
+        {
             CoroutineManager.StopCoroutineAsynk(timerCoroutine);
         }
     }
@@ -54,14 +91,31 @@ public class Timer
             yield return null;
 
             CurrentTime -= Time.deltaTime;
+            CurrentTickTime = lastTick - CurrentTime;
 
-            if (lastTick - CurrentTime >= tickTime)
+            if (CurrentTickTime >= maxTickTime)
             {
                 lastTick = CurrentTime;
-                OnTick?.Invoke(CurrentTime);
+                OnTick?.Invoke();
             }
         }
 
         Stop();
+    }
+
+    private IEnumerator TimerTickRoutine()
+    {
+        while (true)
+        {
+            yield return null;
+
+            CurrentTickTime += Time.deltaTime;
+
+            if (CurrentTickTime >= maxTickTime)
+            {                
+                OnTick?.Invoke();
+                CurrentTickTime = 0.001f;
+            }
+        }
     }
 }

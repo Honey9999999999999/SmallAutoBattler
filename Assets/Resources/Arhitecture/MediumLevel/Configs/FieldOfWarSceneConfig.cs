@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Arhitecture
+﻿namespace Arhitecture
 {
     public class FieldOfWarSceneConfig : SceneConfig
     {

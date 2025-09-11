@@ -25,7 +25,7 @@ namespace Tools
             {
                 accumulatedChance += kvp.Key;
 
-                if(accumulatedChance >= currentChance)
+                if (accumulatedChance >= currentChance)
                 {
                     return kvp.Value;
                 }

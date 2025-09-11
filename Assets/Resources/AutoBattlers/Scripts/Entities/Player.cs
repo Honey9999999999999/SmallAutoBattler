@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AutoBattlers;
-using BarSystem;
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace Autobattlers
+namespace AutoBattlers
 {
     public class Player : AutoBattler
     {
@@ -27,10 +24,18 @@ namespace Autobattlers
                 new BangSkill(this)
                 {
                     ReloadTime = 20f,
-                    DecreaseAttackSpeed = .4f,
-                    IncreaseAttack = 2f,
+                    AttackSpeedFactor = .4f,
+                    AttackPowerFactor = 2f,
                     Duration = 10f,
                     RequireMP = 60
+                },
+                new BangSkill(this)
+                {
+                    ReloadTime = 20f,
+                    AttackSpeedFactor = 5f,
+                    AttackPowerFactor = .4f,
+                    Duration = 10f,
+                    RequireMP = 120
                 }
             };
         }
@@ -49,7 +54,7 @@ namespace Autobattlers
         public AutoBattler GetRandomEnemy()
         {
             IEnumerable<AutoBattler> enemies = FieldOfWar.GetEnemies();
-            return enemies.ElementAt(UnityEngine.Random.Range(0, enemies.Count()));
+            return enemies.ElementAt(Random.Range(0, enemies.Count()));
         }
 
         public bool TryGetWeaknessEnemy(out AutoBattler enemy)

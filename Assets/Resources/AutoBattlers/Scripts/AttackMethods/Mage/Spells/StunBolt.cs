@@ -1,6 +1,4 @@
-﻿using Autobattlers;
-
-namespace AutoBattlers
+﻿namespace AutoBattlers
 {
     public class StunBolt : MagicSpell
     {

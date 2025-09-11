@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Autobattlers
+namespace AutoBattlers
 {
     public abstract class StatusEffect
     {
@@ -12,11 +12,11 @@ namespace Autobattlers
         public StatusEffect(AutoBattler owner, float duration)
         {
             this.owner = owner;
-            shutdownTimer = new();            
+            shutdownTimer = new();
             owner.OnDead.AddListener((AutoBattler _) => shutdownTimer.Stop());
             shutdownTimer.OnStoped += () => OnShutDown?.Invoke();
             Initialize();
-            shutdownTimer.Start(duration);            
+            shutdownTimer.Start(duration);
         }
 
         protected abstract void Initialize();

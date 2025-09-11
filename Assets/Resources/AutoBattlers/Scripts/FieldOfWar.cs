@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using AutoBattlers;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Autobattlers
+namespace AutoBattlers
 {
     public class FieldOfWar : MonoBehaviour
     {
@@ -22,7 +18,7 @@ namespace Autobattlers
         private Player player;
         [SerializeField] private AutoBattler enemyPrefab;
 
-        public Transform targetImage;        
+        public Transform targetImage;
 
         private static FieldOfWar instance;
 
@@ -53,10 +49,10 @@ namespace Autobattlers
 
                 List<RaycastResult> results = new();
                 EventSystem.current.RaycastAll(pointerEventData, results);
-                                
+
                 foreach (var result in results)
                 {
-                    if (result.gameObject.TryGetComponent(out Enemy enemy))
+                    if (result.gameObject.TryGetComponent(out Enemy enemy) && enemy.IsAlive)
                     {
                         player.Target = enemy;
                     }

@@ -76,7 +76,7 @@ namespace BarSystem
 
             if (CanRestore)
             {
-                if(recoveryRoutine != null)
+                if (recoveryRoutine != null)
                 {
                     CoroutineManager.StopCoroutineAsynk(recoveryRoutine);
                 }
@@ -99,10 +99,10 @@ namespace BarSystem
         {
             yield return new WaitForSeconds(recoveryCooldown);
 
-            while(Resource < maxResource)
+            while (Resource < maxResource)
             {
                 Resource += recoveryPower * Time.deltaTime;
-                yield return null;                
+                yield return null;
             }
 
             OnRestored?.Invoke();

@@ -1,4 +1,4 @@
-﻿namespace Autobattlers
+﻿namespace AutoBattlers
 {
     public class StunEffect : StatusEffect
     {

@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb93253c33295d24aa5a5ef4fe820280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonPrefab: {fileID: 9009031087810371186, guid: f816a040649a6c34baecc0f458e9306b, type: 3}
+  buttonPrefab: {fileID: 5815195174916070624, guid: f816a040649a6c34baecc0f458e9306b, type: 3}
 --- !u!114 &2814411563382953925
 MonoBehaviour:
   m_ObjectHideFlags: 0

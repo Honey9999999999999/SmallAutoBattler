@@ -1,6 +1,4 @@
-﻿using Autobattlers;
-
-namespace AutoBattlers
+﻿namespace AutoBattlers
 {
     public class PhisicalBolt : MagicSpell
     {
@@ -11,7 +9,7 @@ namespace AutoBattlers
 
         public override void InitializeOwner(AutoBattler owner)
         {
-            power *= owner.Stats.AttackPower;
+            power *= owner.Stats.AttackPower.GeneralValue;
         }
     }
 }

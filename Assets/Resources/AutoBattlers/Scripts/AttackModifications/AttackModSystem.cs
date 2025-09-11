@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Autobattlers;
 
 namespace AutoBattlers.AttackModifications
 {
@@ -24,7 +22,7 @@ namespace AutoBattlers.AttackModifications
         }
 
         public void AddAttackMod<T>(float chance) where T : AttackMod
-        {            
+        {
             attackChanceMap[typeof(T)].Chance += chance;
         }
         public T GetAttackMod<T>() where T : AttackMod

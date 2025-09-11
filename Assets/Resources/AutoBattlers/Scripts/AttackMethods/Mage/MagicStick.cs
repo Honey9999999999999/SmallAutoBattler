@@ -1,5 +1,4 @@
 ﻿using Arhitecture;
-using Autobattlers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,7 +49,7 @@ namespace AutoBattlers
                 spell.transform.position += spell.GetProjectileSpeed() * Time.deltaTime * direction;
 
                 yield return null;
-            }            
+            }
         }
     }
 }

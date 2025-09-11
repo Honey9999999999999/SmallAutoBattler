@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7217194765005744012}
   - component: {fileID: 4087774597230904725}
   - component: {fileID: 3808616855830181961}
-  - component: {fileID: 9009031087810371186}
+  - component: {fileID: 5815195174916070624}
   m_Layer: 5
   m_Name: SkillButton
   m_TagString: Untagged
@@ -122,7 +122,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 283015647398978579}
   m_CullTransparentMesh: 1
---- !u!114 &9009031087810371186
+--- !u!114 &5815195174916070624
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

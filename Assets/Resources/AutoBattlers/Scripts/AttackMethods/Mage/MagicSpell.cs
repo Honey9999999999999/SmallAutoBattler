@@ -1,5 +1,4 @@
-﻿using Autobattlers;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace AutoBattlers
@@ -14,20 +13,20 @@ namespace AutoBattlers
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if(collision.isTrigger && collision.gameObject.TryGetComponent(out AutoBattler battler))
+            if (collision.isTrigger && collision.gameObject.TryGetComponent(out AutoBattler battler))
             {
                 OnTrigger?.Invoke(battler);
                 if (battler.IsAlive)
                 {
                     Do(battler);
-                }                
+                }
                 Destroy(gameObject);
             }
         }
 
         public virtual void InitializeOwner(AutoBattler owner)
         {
-            power *= owner.Stats.Intellegence;
+            power *= owner.Stats.Intellegence.GeneralValue;
         }
 
         public abstract void Do(AutoBattler target);

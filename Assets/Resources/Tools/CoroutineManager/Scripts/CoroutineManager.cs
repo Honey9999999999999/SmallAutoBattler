@@ -7,7 +7,7 @@ public class CoroutineManager : MonoBehaviour
 
     public void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
             return;

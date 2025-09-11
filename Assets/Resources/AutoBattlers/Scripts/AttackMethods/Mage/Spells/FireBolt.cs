@@ -1,7 +1,4 @@
-﻿using Autobattlers;
-using UnityEngine;
-
-namespace AutoBattlers
+﻿namespace AutoBattlers
 {
     public class FireBolt : MagicSpell
     {
