@@ -4,7 +4,13 @@
     {
         public override void Do(AutoBattler target)
         {
-            target.GetDamage(power);
+            Attack attack = new Attack(target)
+            {
+                DamageType = DamageType.Phisical,
+                Damage = power
+            };
+
+            target.GetDamage(attack);
         }
 
         public override void InitializeOwner(AutoBattler owner)

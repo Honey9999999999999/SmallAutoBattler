@@ -49,6 +49,8 @@ namespace AutoBattlers
             }
 
             OnStartBattle?.Invoke();
+
+            OnStartBattle = null;
             Destroy(gameObject);
         }
     }

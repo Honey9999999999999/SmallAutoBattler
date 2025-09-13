@@ -4,12 +4,20 @@
     {
         public override string SceneName => "FOWScene";
 
-        public override InteractorBase GetInteractorBase()
+        public override InteractorsBase GetInteractorBase()
         {
-            InteractorBase interactorBase = base.GetInteractorBase();
+            InteractorsBase interactorBase = base.GetInteractorBase();
             interactorBase.AddInteractor<FieldOfWarInteractor>();
 
             return interactorBase;
+        }
+
+        public override RepositoriesBase GetRepositoriesBase()
+        {
+            RepositoriesBase repositoriesBase = base.GetRepositoriesBase();
+            repositoriesBase.AddRepository<PlayerRepository>();
+
+            return repositoriesBase;
         }
     }
 }

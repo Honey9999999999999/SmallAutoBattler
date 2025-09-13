@@ -27,14 +27,14 @@ public class Timer
 
     public void Start(float second)
     {
-        if(timerCoroutine == null)
+        if (timerCoroutine == null)
         {
             maxTime = second;
             CurrentTime = second;
             lastTick = second;
             timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerRoutine());
             OnStarted?.Invoke();
-        }        
+        }
     }
     public void StartTicks(float second)
     {
@@ -58,7 +58,7 @@ public class Timer
         CurrentTickTime = 0;
 
         if (timerCoroutine != null)
-        {            
+        {
             CoroutineManager.StopCoroutineAsynk(timerCoroutine);
         }
     }
@@ -78,7 +78,7 @@ public class Timer
                 timerCoroutine = CoroutineManager.StartCoroutineAsynk(TimerTickRoutine());
                 return;
             }
-        }        
+        }
     }
     public void Pause()
     {
@@ -117,7 +117,7 @@ public class Timer
             CurrentTickTime += Time.deltaTime;
 
             if (CurrentTickTime >= maxTickTime)
-            {                
+            {
                 OnTick?.Invoke();
                 CurrentTickTime = 0.001f;
             }

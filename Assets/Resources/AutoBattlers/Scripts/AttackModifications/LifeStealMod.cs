@@ -11,11 +11,16 @@ namespace AutoBattlers.AttackModifications
         }
         private float percent;
 
-        public LifeStealMod(AutoBattler owner) : base(owner) { }
+        public LifeStealMod(AutoBattler owner) : base(owner) { DamageType = DamageType.Phisical; }
 
-        public override void Do(AutoBattler target)
+        public override void Do(Attack attack)
         {
-            owner.Health.AddResource(owner.Stats.AttackPower.GeneralValue * percent);
+            attack.OnEnemyTakenDamage += (AutoBattler target, float value) => LifeSteal(value);
+        }
+
+        private void LifeSteal(float value)
+        {
+            owner.Health.AddResource(value * Percent);
         }
     }
 }

@@ -31,18 +31,31 @@ namespace Arhitecture
 
             sceneConfigs = new List<SceneConfig>()
             {
+                new MenuConfig(),
+                new CCConfig(),
                 new FieldOfWarSceneConfig()
             };
         }
         private void Start()
         {
-            StartCoroutine(LoadSceneAsync(firstSceneName));
+            StartCoroutine(instance.LoadSceneAsync(firstSceneName));
         }
 
-        public IEnumerator LoadSceneAsync(string sceneName)
+        public static void LoadScene(string sceneName)
+        {
+            OnInitialized = null;
+            instance.StartCoroutine(instance.ReleaseResources());
+            instance.StartCoroutine(instance.LoadSceneAsync(sceneName));
+        }
+        private IEnumerator ReleaseResources()
+        {
+            scene.OnDispose();
+            yield return null;
+        }
+        private IEnumerator LoadSceneAsync(string sceneName)
         {
             AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneName);
-            scene = new SceneBase(GetConfig(firstSceneName));
+            scene = new SceneBase(GetConfig(sceneName));
 
             while (!loadOperation.isDone)
             {
@@ -67,6 +80,10 @@ namespace Arhitecture
         public static T GetInteractor<T>() where T : Interactor
         {
             return instance.scene.GetInteractor<T>();
+        }
+        public static T GetRepository<T>() where T : Repository
+        {
+            return instance.scene.GetRepository<T>();
         }
     }
 }

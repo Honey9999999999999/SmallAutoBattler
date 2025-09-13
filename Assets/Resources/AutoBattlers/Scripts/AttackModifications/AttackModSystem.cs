@@ -29,5 +29,13 @@ namespace AutoBattlers.AttackModifications
         {
             return (T)attackModsMap[typeof(T)];
         }
+
+        public void ApplyMods(Attack attack)
+        {
+            foreach (var mod in GetAttackMods().Where(x => x.DamageType == attack.DamageType))
+            {
+                mod.Do(attack);
+            }
+        }
     }
 }

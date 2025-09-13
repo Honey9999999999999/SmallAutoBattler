@@ -15,7 +15,13 @@ namespace AutoBattlers
 
         protected override void Do()
         {
-            owner.Target.GetDamage(owner.Stats.AttackPower.GeneralValue * percent);
+            Attack attack = new Attack(owner.Target)
+            {
+                DamageType = DamageType.Magical,
+                Damage = owner.Stats.AttackPower.GeneralValue * percent
+            };
+
+            owner.Target.GetDamage(attack);
         }
     }
 }

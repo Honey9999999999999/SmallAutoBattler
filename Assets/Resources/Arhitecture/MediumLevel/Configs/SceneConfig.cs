@@ -3,12 +3,18 @@
     public abstract class SceneConfig
     {
         public abstract string SceneName { get; }
-        public virtual InteractorBase GetInteractorBase()
+        public virtual InteractorsBase GetInteractorBase()
         {
-            InteractorBase interactorBase = new();
+            InteractorsBase interactorBase = new();
             interactorBase.AddInteractor<CoroutineInteractor>();
             interactorBase.AddInteractor<MainCanvasInteractor>();
             return interactorBase;
+        }
+
+        public virtual RepositoriesBase GetRepositoriesBase()
+        {
+            RepositoriesBase repositoriesBase = new();
+            return repositoriesBase;
         }
     }
 }

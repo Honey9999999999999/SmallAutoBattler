@@ -87,6 +87,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   power: 2
   projectileSpeed: 10
+  reloadTime: 2
 --- !u!1 &780228258285952137
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Arhitecture;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -15,6 +16,13 @@ namespace AutoBattlers
         [SerializeField] private List<Transform> enemyPoint = new();
         private readonly Dictionary<AutoBattler, Transform> enemiesMap = new();
 
+        public int EnemyPull
+        {
+            get => enemyPull;
+            set => enemyPull = Mathf.Max(0, value);
+        }
+        [SerializeField, Min(0)] private int enemyPull;
+
         [SerializeField] private Player playerPrefab;
         private Player player;
         [SerializeField] private AutoBattler enemyPrefab;
@@ -27,7 +35,7 @@ namespace AutoBattlers
 
         public void Awake()
         {
-            if(instance == null)
+            if (instance == null)
             {
                 instance = this;
 
@@ -48,6 +56,7 @@ namespace AutoBattlers
             if (player == null)
             {
                 player = Instantiate(playerPrefab, playerPoint);
+                player.Stats = Game.GetRepository<PlayerRepository>().Stats;
                 player.OnTargetChanged += MoveTargetImage;
 
                 OnEntitySpawned?.Invoke();
@@ -93,16 +102,23 @@ namespace AutoBattlers
 
         private void SpawnEnemy(Transform point)
         {
-            if (enemiesMap.Values.Count(x => x == point) > 0)
+            if (enemyPull-- > 0)
             {
-                return;
+                if (enemiesMap.Values.Count(x => x == point) > 0)
+                {
+                    return;
+                }
+
+                AutoBattler battler = Instantiate(enemyPrefab, point);
+                enemiesMap[battler] = point;
+                battler.OnDispose.AddListener(ReSpawnEnemy);
+
+                OnEntitySpawned?.Invoke();
             }
-
-            AutoBattler battler = Instantiate(enemyPrefab, point);
-            enemiesMap[battler] = point;
-            battler.OnDispose.AddListener(ReSpawnEnemy);
-
-            OnEntitySpawned?.Invoke();
+            else if (GetEnemies().Count() <= 0)
+            {
+                Game.LoadScene("MenuScene");
+            }
         }
 
         private void ReSpawnEnemy(AutoBattler battler)
@@ -113,5 +129,23 @@ namespace AutoBattlers
         }
 
         public static IEnumerable<AutoBattler> GetEnemies() => instance.enemiesMap.Keys.Where(x => x.Health.IsResource);
+
+        public void OnDispose()
+        {
+            OnEntitySpawned = null;
+            OnBattleStart = null;
+
+            IsBattleStarted = false;
+
+            //Destroy(player.gameObject);
+
+            //foreach (var enemy in GetEnemies())
+            //{
+            //    Destroy(enemy.gameObject);
+            //}
+
+            //Destroy(gameObject);
+            //instance = null;
+        }
     }
 }

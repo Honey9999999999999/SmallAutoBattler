@@ -56,7 +56,7 @@ namespace AutoBattlers
             enemy = null;
             IEnumerable<AutoBattler> enemies = FieldOfWar.GetEnemies();
 
-            if(enemies.Count() > 0)
+            if (enemies.Count() > 0)
             {
                 enemy = enemies.ElementAt(Random.Range(0, enemies.Count()));
                 return true;

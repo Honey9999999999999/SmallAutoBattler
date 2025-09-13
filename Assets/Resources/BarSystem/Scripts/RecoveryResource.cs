@@ -68,6 +68,17 @@ namespace BarSystem
             Resource += value;
             OnAdded?.Invoke(value);
         }
+
+        public bool TryGetResource(float value)
+        {
+            if (Resource >= value)
+            {
+                GetResource(value);
+                return true;
+            }
+
+            return false;
+        }
         public void GetResource(float value)
         {
             value = Math.Clamp(value, 0, resource);

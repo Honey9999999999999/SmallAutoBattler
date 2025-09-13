@@ -9,7 +9,7 @@
         protected override void Initialize()
         {
             shutdownTimer.MaxTickTime = tickTime;
-            shutdownTimer.OnTick += () => owner.GetDamage(2);
+            shutdownTimer.OnTick += () => owner.GetDamage(new(owner) { DamageType = DamageType.Magical, Damage = 2 });
         }
     }
 }

@@ -319,6 +319,15 @@ MonoBehaviour:
     manaRegeneration:
       baseValue: 4
       additionalValue: 0
+    armor:
+      baseValue: 1
+      additionalValue: 0
+    phisicalResist:
+      baseValue: 1
+      additionalValue: 0
+    magicalResist:
+      baseValue: 1
+      additionalValue: 0
   animator: {fileID: 8976652347731333533}
   magicStick: {fileID: 1137098658457646393}
 --- !u!1 &2887347915025785875

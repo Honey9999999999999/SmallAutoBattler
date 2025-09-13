@@ -600,6 +600,15 @@ MonoBehaviour:
     manaRegeneration:
       baseValue: 1
       additionalValue: 0
+    armor:
+      baseValue: 5
+      additionalValue: 0
+    phisicalResist:
+      baseValue: 1
+      additionalValue: 0
+    magicalResist:
+      baseValue: 1
+      additionalValue: 0
   animator: {fileID: 5986561409349773899}
 --- !u!222 &5795620592064426795
 CanvasRenderer:

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Arhitecture
 {
-    public class InteractorBase
+    public class InteractorsBase
     {
         private readonly Dictionary<Type, Interactor> interactors;
 
-        public InteractorBase()
+        public InteractorsBase()
         {
             interactors = new Dictionary<Type, Interactor>();
         }
@@ -38,6 +38,14 @@ namespace Arhitecture
             foreach (var interactor in interactors.Values)
             {
                 interactor.OnStart();
+            }
+        }
+
+        public void OnDispose()
+        {
+            foreach (var interactor in interactors.Values)
+            {
+                interactor.OnDispose();
             }
         }
 

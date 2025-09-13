@@ -11,6 +11,9 @@ namespace AutoBattlers
         [SerializeField, Min(0)] protected float power;
         [SerializeField, Min(0)] protected float projectileSpeed;
 
+        public float ReloadTime => reloadTime;
+        [SerializeField, Min(0)] protected float reloadTime;
+
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.isTrigger && collision.gameObject.TryGetComponent(out AutoBattler battler))

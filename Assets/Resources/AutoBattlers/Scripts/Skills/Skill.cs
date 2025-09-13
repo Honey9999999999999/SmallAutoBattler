@@ -43,7 +43,7 @@ namespace AutoBattlers
         {
             if (!reloadTimer.IsRunning)
             {
-                if (owner.TryGetMana(RequireMP))
+                if (owner.Mana.TryGetResource(RequireMP))
                 {
                     Do();
                     reloadTimer.Start(ReloadTime);

@@ -11,6 +11,7 @@ namespace AutoBattlers.AttackModifications
 
         protected AutoBattler owner;
 
+        public DamageType DamageType { get; protected set; }
         public float Chance
         {
             get => chance;
@@ -18,6 +19,6 @@ namespace AutoBattlers.AttackModifications
         }
         private float chance;
 
-        public abstract void Do(AutoBattler target);
+        public abstract void Do(Attack attack);
     }
 }

@@ -8,6 +8,7 @@ namespace Arhitecture
         public FieldOfWar FieldOfWar { get; private set; }
         public TimerToBattle TimerTB { get; private set; }
         public SkillBoard Skillboard { get; private set; }
+
         private const string FieldOfWarPath = "AutoBattlers/Prefabs/FieldOfWar";
         private const string TimerTBPath = "AutoBattlers/Prefabs/TimerToBattle";
         private const string SkillBoardPath = "AutoBattlers/Prefabs/UI/SkillBoard";
@@ -22,6 +23,7 @@ namespace Arhitecture
 
         public override void OnInitialize()
         {
+            FieldOfWar.EnemyPull = 8;
             FieldOfWar.SpawnPlayer();
             FieldOfWar.SpawnEnemies();
 
@@ -32,10 +34,17 @@ namespace Arhitecture
 
         public override void OnStart()
         {
-            base.OnStart();
-
-            TimerToBattle.OnStartBattle += FieldOfWar.StartBattle;            
+            TimerToBattle.OnStartBattle += FieldOfWar.StartBattle;
             Game.OnInitialized += TimerToBattle.StartBattle;
+
+            base.OnStart();
+        }
+
+        public override void OnDispose()
+        {
+            FieldOfWar.OnDispose();
+
+            base.OnDispose();
         }
     }
 }

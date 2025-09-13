@@ -10,5 +10,6 @@ namespace Arhitecture
         public virtual void OnCreate() { Debug.Log(GetType().Name + " is created"); }
         public virtual void OnInitialize() { Debug.Log(GetType().Name + " is initialized"); }
         public virtual void OnStart() { OnInitialized?.Invoke(); Debug.Log(GetType().Name + " is started"); }
+        public virtual void OnDispose() { Debug.Log(GetType().Name + " is disposed"); }
     }
 }

@@ -4962,6 +4962,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   power: 5
   projectileSpeed: 20
+  reloadTime: 0.5
 --- !u!222 &9220198651805233811
 CanvasRenderer:
   m_ObjectHideFlags: 0

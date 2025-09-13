@@ -1,8 +1,8 @@
-using AutoBattlers.AttackModifications;
-using BarSystem;
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using AutoBattlers.AttackModifications;
+using BarSystem;
+using EntityStatsSystem;
 using UnityEngine;
 using UnityEngine.Events;
 using static AutoBattlers.StatusSystem;
@@ -19,9 +19,17 @@ namespace AutoBattlers
         public UnityEvent<AutoBattler> OnDead;
         public UnityEvent<AutoBattler> OnDispose;
 
-        public AttackModSystem AttackModSystem { get; private set; }        
+        public AttackModSystem AttackModSystem { get; private set; }
 
-        public EntityStats Stats => stats;
+        public EntityStats Stats
+        {
+            get => stats;
+            set
+            {
+                stats = value;
+                Initialize();
+            }
+        }
         [SerializeField] private EntityStats stats;
         public StatusSystem Statuses { get; private set; }
         public RecoveryResource Health { get; private set; }
@@ -72,15 +80,8 @@ namespace AutoBattlers
 
         [SerializeField] protected Animator animator;
 
-        public void Awake()
-        {
-           Initialize();
-        }
-
         protected virtual void Initialize()
         {
-            Stats.Initialize();
-
             Health = new RecoveryResource(stats.MaxHealth.GeneralValue, stats.HealthRegeneration.GeneralValue, 1, false);
             Health.OnChanged += (float current, float max) => OnHealthChanged?.Invoke(current, max);
             Health.OnEnd += () => StartCoroutine(Dead());
@@ -95,7 +96,7 @@ namespace AutoBattlers
             AttackModSystem = new AttackModSystem(this);
 
             attackTimer = new Timer();
-            attackTimer.OnTick += AttackTick;
+            attackTimer.OnTick += Attack;
             Stats.AttackPerMin.OnChanged += (float _) => attackTimer.MaxTickTime = Stats.TimeBetweenAttacks;
         }
 
@@ -117,7 +118,7 @@ namespace AutoBattlers
 
         private void FindTarget()
         {
-            if(TryFindTarget(out AutoBattler enemy))
+            if (TryFindTarget(out AutoBattler enemy))
             {
                 Target = enemy;
                 Target.OnDead.AddListener((AutoBattler _) => FindTarget());
@@ -127,7 +128,7 @@ namespace AutoBattlers
                 return;
             }
 
-            if(Target != null)
+            if (Target != null)
             {
                 attackTimer.Pause();
                 FieldOfWar.OnEntitySpawned += FindTarget;
@@ -136,18 +137,23 @@ namespace AutoBattlers
         }
         public abstract bool TryFindTarget(out AutoBattler enemy);
 
-        public void GetDamage(float damage)
+        public void GetDamage(Attack attack)
         {
+            switch (attack.DamageType)
+            {
+                case DamageType.Phisical:
+                    attack.Damage -= attack.Damage * Stats.PhisicalResist.GeneralValue;
+                    break;
+                case DamageType.Magical:
+                    attack.Damage -= attack.Damage * Stats.MagicalResist.GeneralValue;
+                    break;
+                default:
+                    break;
+            }
+
             if (Health.IsResource)
             {
-                Health.GetResource(damage);
-            }
-        }
-        public void GetStatuses(List<KeyValuePair<StatusType, float>> statuses)
-        {
-            foreach (var kvp in statuses)
-            {
-                Statuses.AddStatusEffect(kvp);
+                Health.GetResource(attack.Damage);
             }
         }
         public void GetStatus(StatusType type, float durability)
@@ -155,28 +161,6 @@ namespace AutoBattlers
             if (Health.IsResource)
             {
                 Statuses.AddStatusEffect(type, durability);
-            }
-        }
-
-        public bool TryGetMana(float value)
-        {
-            if (Mana.Resource >= value)
-            {
-                Mana.GetResource(value);
-                return true;
-            }
-
-            return false;
-        }
-
-
-        private void AttackTick()
-        {
-            Attack();
-
-            foreach (var attackMod in AttackModSystem.GetAttackMods())
-            {
-                attackMod.Do(Target);
             }
         }
 
