@@ -1,4 +1,4 @@
-﻿using UI;
+﻿using UI.CCMenu;
 using UnityEngine;
 
 namespace Arhitecture

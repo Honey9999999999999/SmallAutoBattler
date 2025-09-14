@@ -2,8 +2,9 @@
 using EntityStatsSystem;
 using TMPro;
 using UnityEngine;
+using static EntityStatsSystem.EntityStats;
 
-namespace UI
+namespace UI.CCMenu
 {
     public class CCMenu : MonoBehaviour
     {
@@ -21,16 +22,20 @@ namespace UI
 
             foreach (var statType in playerStats.CharacteristicsMap.Keys)
             {
-                if (playerStats.CharacteristicsMap[statType].GetType() == playerStats.CharacteristicsMap[StatType.Intellegence].GetType())
+                Attribute attribute = playerStats.CharacteristicsMap[statType];
+
+                if (attribute.GetType() == playerStats.CharacteristicsMap[StatType.Intellegence].GetType())
                 {
                     StatField statField = Instantiate(statFieldPrefab, ButtonParent);
                     statField.Type = statType;
                 }
-
-                TextMeshProUGUI statText = Instantiate(statTextPrefab, StatsParent);
-                playerStats.CharacteristicsMap[statType].OnChanged += (float value) => statText.text = $"{statType}: {(value / (int)value == 1 ? value.ToString() : $"{value:F2}")}";
-                float value = playerStats.CharacteristicsMap[statType].GeneralValue;
-                statText.text = $"{statType}: {(value / (int)value == 1 ? value.ToString() : $"{value:F2}")}";
+                else
+                {
+                    TextMeshProUGUI statText = Instantiate(statTextPrefab, StatsParent);
+                    attribute.OnChanged += (float value) => statText.text = $"{statType}: {(value / (int)value == 1 ? value.ToString() : $"{value:F2}")}";
+                    float value = attribute.GeneralValue;
+                    statText.text = $"{statType}: {(value / (int)value == 1 ? value.ToString() : $"{value:F2}")}";
+                }
             }
 
             StatField.OnAvaiblePointsChanged += (float value) => availblePointsText.text = $"Availble Points: {value}";

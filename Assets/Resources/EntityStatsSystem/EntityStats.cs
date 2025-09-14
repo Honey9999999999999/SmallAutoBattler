@@ -10,11 +10,17 @@ namespace EntityStatsSystem
         [Serializable]
         public class Attribute
         {
+            public Attribute() : this(10) { }
+            public Attribute(int baseValue)
+            {
+                this.baseValue = baseValue;
+            }
+
             public event Action<float> OnChanged;
 
             public float GeneralValue { get; protected set; }
 
-            public int BaseValue
+            public virtual int BaseValue
             {
                 get => baseValue;
                 set
@@ -23,7 +29,7 @@ namespace EntityStatsSystem
                     Update();
                 }
             }
-            [SerializeField, Min(1)] private int baseValue = 1;
+            [SerializeField, Min(1)] protected int baseValue = 1;
             public int AdditionalValue
             {
                 get => additionalValue;
@@ -49,6 +55,19 @@ namespace EntityStatsSystem
         [Serializable]
         public class Characteristic : Attribute
         {
+            public Characteristic() : this(0) { }
+            public Characteristic(int baseValue) : base(baseValue) { }
+
+            public override int BaseValue
+            {
+                get => baseValue;
+                set
+                {
+                    baseValue = Mathf.Max(0, value);
+                    Update();
+                }
+            }
+
             public Attribute Attribute
             {
                 get => attribute;
@@ -70,9 +89,11 @@ namespace EntityStatsSystem
         [Serializable]
         public class UnattainableCharacteristic : Characteristic
         {
+            public UnattainableCharacteristic() : base(1) { }
+
             public override void Update()
             {
-                float value = (BaseValue * Attribute.GeneralValue) + AdditionalValue;
+                float value = (BaseValue * (Attribute.GeneralValue + 1)) + AdditionalValue;
                 float quadraValue = Mathf.Pow(value, 1.15f);
                 GeneralValue = (quadraValue - value) / quadraValue;
                 OnChangedInvoke();
@@ -96,10 +117,10 @@ namespace EntityStatsSystem
             maxHealth = new Characteristic();
             maxMana = new Characteristic();
 
-            healthRegeneration = new Characteristic();
-            manaRegeneration = new Characteristic();
+            healthRegeneration = new Characteristic(1);
+            manaRegeneration = new Characteristic(1);
 
-            armor = new Characteristic();
+            armor = new Characteristic(1);
 
             phisicalResist = new UnattainableCharacteristic();
             magicalResist = new UnattainableCharacteristic();
@@ -166,8 +187,8 @@ namespace EntityStatsSystem
             attackPerMin.OnChanged += (float value) => TimeBetweenAttacks = 1 / (value / 60);
 
             armor.Attribute = agility;
-            phisicalResist.Attribute = armor;
 
+            phisicalResist.Attribute = armor;
             magicalResist.Attribute = intellegence;
 
             attackPower.Attribute = CharacteristicsMap[MainStat];
